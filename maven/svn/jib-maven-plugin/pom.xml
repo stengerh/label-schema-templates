@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.github.stengerh</groupId>
+  <artifactId>label-schema-jib-maven-plugin-svn-template</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  
+  <scm>
+    <url>TODO</url>
+    <connection>TODO</connection>
+    <developerConnection>TODO</developerConnection>
+  </scm>
+  
+  <properties>
+    <docker.image.name>${project.artifactId}</docker.image.name>
+    <docker.image.label>latest</docker.image.label>
+  </properties>
+  
+  <profiles>
+    <profile>
+      <id>release</id>
+      <properties>
+        <docker.image.label>${project.version}</docker.image.label>
+      </properties>
+    </profile>
+  </profiles>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <!-- create: MessageFormat, create-metadata: SimpleDateFormat -->
+          <!-- See also https://github.com/mojohaus/buildnumber-maven-plugin/pull/41 -->
+          <timestampFormat>{0,date,yyyy-MM-dd'T'HH:mm:ss.SSSZ}</timestampFormat>
+          <providerImplementations>
+            <svn>javasvn</svn>
+          </providerImplementations>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
+            <artifactId>maven-scm-provider-svnjava</artifactId>
+            <version>2.1.2</version>
+          </dependency>
+          <dependency>
+            <groupId>org.tmatesoft.svnkit</groupId>
+            <artifactId>svnkit</artifactId>
+            <version>1.9.3</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>jib-maven-plugin</artifactId>
+        <version>1.0.0</version>
+        <executions>
+          <execution>
+            <id>build</id>
+            <phase>package</phase>
+            <goals>
+              <goal>dockerBuild</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <to>
+            <image>${docker.image.name}:${docker.image.label}</image>
+          </to>
+          <container>
+            <labels>
+              <org.label-schema.schema-version>1.0</org.label-schema.schema-version>
+              <org.label-schema.name>Label Schema Templates - Jib Maven Plugin with Subversion</org.label-schema.name>
+              <org.label-schema.version>${project.version}</org.label-schema.version>
+              <org.label-schema.vcs-url>${project.scm.url}</org.label-schema.vcs-url>
+              <org.label-schema.vcs-ref>${buildNumber}</org.label-schema.vcs-ref>
+              <org.label-schema.build-date>${timestamp}</org.label-schema.build-date>
+            </labels>
+          </container>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

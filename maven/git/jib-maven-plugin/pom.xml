@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.github.stengerh</groupId>
+  <artifactId>label-schema-jib-maven-plugin-git-template</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  
+  <properties>
+    <docker.image.name>${project.artifactId}</docker.image.name>
+    <docker.image.label>latest</docker.image.label>
+  </properties>
+  
+  <profiles>
+    <profile>
+      <id>release</id>
+      <properties>
+        <docker.image.label>${project.version}</docker.image.label>
+      </properties>
+    </profile>
+  </profiles>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>pl.project13.maven</groupId>
+        <artifactId>git-commit-id-plugin</artifactId>
+        <version>2.2.6</version>
+        <executions>
+          <execution>
+            <id>get-infos</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>revision</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <dateFormat>yyyy-MM-dd'T'HH:mm:ss.SSS'Z'</dateFormat>
+          <dateFormatTimeZone>UTC</dateFormatTimeZone>
+          <verbose>true</verbose>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>jib-maven-plugin</artifactId>
+        <version>1.0.0</version>
+        <executions>
+          <execution>
+            <id>build</id>
+            <phase>package</phase>
+            <goals>
+              <goal>dockerBuild</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <to>
+            <image>${docker.image.name}:${docker.image.label}</image>
+          </to>
+          <container>
+            <labels>
+              <org.label-schema.schema-version>1.0</org.label-schema.schema-version>
+              <org.label-schema.name>Label Schema Templates - Jib Maven Plugin with Git</org.label-schema.name>
+              <org.label-schema.version>${project.version}</org.label-schema.version>
+              <org.label-schema.vcs-url>${git.remote.origin.url}</org.label-schema.vcs-url>
+              <org.label-schema.vcs-ref>${git.commit.id}</org.label-schema.vcs-ref>
+              <org.label-schema.build-date>${git.build.time}</org.label-schema.build-date>
+            </labels>
+          </container>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

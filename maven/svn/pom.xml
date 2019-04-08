@@ -4,18 +4,25 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.github.stengerh</groupId>
-  <artifactId>label-schema-maven-templates</artifactId>
+  <artifactId>label-schema-maven-svn-templates</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <scm>
-    <url>https://github.com/stengerh/label-schema-templates</url>
-    <connection>https://github.com/stengerh/label-schema-templates.git</connection>
-    <developerConnection>https://github.com/stengerh/label-schema-templates.git</developerConnection>
-  </scm>
-
   <modules>
-    <module>git</module>
-    <module>svn</module>
+    <module>jib-maven-plugin</module>
   </modules>
+
+  <profiles>
+    <profile> 
+      <id>test-working-copy</id>
+      <activation>
+        <file>
+          <exists>test-working-copy</exists>
+        </file>
+      </activation>
+      <modules>
+        <module>test-working-copy</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>
